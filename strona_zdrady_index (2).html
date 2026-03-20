@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wykryj Zdradę</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #171a21;
+      --panel-2: #1d2230;
+      --text: #f3f4f6;
+      --muted: #b6bcc8;
+      --accent: #a11b2b;
+      --accent-2: #d13a4f;
+      --line: rgba(255,255,255,0.08);
+      --ok: #7bd88f;
+      --shadow: 0 20px 50px rgba(0,0,0,0.35);
+      --radius: 20px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #0d1015 0%, #11151d 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(10px);
+      background: rgba(10,12,17,0.72);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.95rem;
+    }
+
+    .brand-mark {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #ff6b7d, var(--accent));
+      box-shadow: 0 0 18px rgba(209,58,79,0.7);
+      animation: pulse 2.2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
+
+    .menu {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 0.96rem;
+      color: var(--muted);
+    }
+
+    .menu a:hover { color: white; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 700;
+      transition: 0.25s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      box-shadow: 0 16px 36px rgba(161,27,43,0.35);
+    }
+
+    .btn-primary:hover { transform: translateY(-2px); }
+
+    .btn-secondary {
+      border-color: var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 88px 0 64px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(8,10,15,0.88) 0%, rgba(8,10,15,0.7) 42%, rgba(8,10,15,0.45) 100%),
+        url('https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 120px;
+      background: linear-gradient(180deg, transparent, rgba(15,17,21,0.95));
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      color: #ffb8c0;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      max-width: 10ch;
+    }
+
+    .lead {
+      color: var(--muted);
+      max-width: 60ch;
+      margin: 18px 0 28px;
+      font-size: 1.07rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .hero-box {
+      background: rgba(17,21,29,0.72);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-box h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .hero-box p { margin: 0 0 14px; color: var(--muted); }
+
+    .mini-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mini-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .mini-item strong { color: var(--text); }
+
+    section {
+      padding: 72px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3.8vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 58ch;
+    }
+
+    .grid-3, .grid-4, .blog-grid, .products-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .blog-grid { grid-template-columns: repeat(3, 1fr); }
+    .products-grid { grid-template-columns: repeat(3, 1fr); }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.12rem;
+    }
+
+    .card p { color: var(--muted); margin-bottom: 0; }
+
+    .card ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .accent-line {
+      width: 52px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), #ff6b7d);
+      margin-bottom: 14px;
+    }
+
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .step {
+      position: relative;
+      padding: 24px 18px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(209,58,79,0.16);
+      color: #ffb4bf;
+      font-weight: 800;
+    }
+
+    .step h3 { margin: 0 0 8px; }
+    .step p { margin: 0; color: var(--muted); }
+
+    .test-wrap {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 20px;
+    }
+
+    .question {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin-bottom: 12px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .question p {
+      margin: 0 0 12px;
+      font-weight: 700;
+    }
+
+    .choices {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .choice {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor: pointer;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+      user-select: none;
+      transition: 0.2s ease;
+    }
+
+    .choice.active {
+      background: rgba(209,58,79,0.14);
+      border-color: rgba(209,58,79,0.5);
+      color: white;
+    }
+
+    .result-box {
+      position: sticky;
+      top: 96px;
+      height: fit-content;
+    }
+
+    .result-value {
+      font-size: 3rem;
+      line-height: 1;
+      font-weight: 800;
+      margin: 6px 0 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(209,58,79,0.16);
+      color: #ffc2ca;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .article {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 100%;
+    }
+
+    .article .tag {
+      color: #ffb6c0;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+    }
+
+    .article h3 { margin: 0; }
+    .article p { margin: 0; color: var(--muted); }
+
+    .product-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .price {
+      color: #ffd1d7;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .muted { color: var(--muted); }
+
+    .cta-band {
+      background: radial-gradient(circle at top left, rgba(209,58,79,0.16), transparent 40%), var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: white;
+      padding: 14px 16px;
+      font: inherit;
+      outline: none;
+    }
+
+    textarea { min-height: 140px; resize: vertical; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 24px 0 40px;
+      color: var(--muted);
+    }
+
+    .small {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .legal {
+      font-size: 0.88rem;
+      color: #aeb5c0;
+      border-top: 1px solid var(--line);
+      margin-top: 22px;
+      padding-top: 18px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .test-wrap,
+      .cta-band,
+      .grid-3,
+      .grid-4,
+      .blog-grid,
+      .products-grid,
+      .steps {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .menu { display: none; }
+      .hero { padding-top: 56px; }
+      h1 { max-width: 100%; }
+    }
+
+    @media (max-width: 720px) {
+      .hero-grid,
+      .test-wrap,
+      .cta-band,
+      .grid-3,
+      .grid-4,
+      .blog-grid,
+      .products-grid,
+      .steps,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      section { padding: 56px 0; }
+      .nav { min-height: 64px; }
+      .section-head { flex-direction: column; align-items: start; }
+      .result-box { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a href="#home" class="brand">
+        <span class="brand-mark"></span>
+        <span>Wykryj Zdradę</span>
+      </a>
+      <nav class="menu">
+        <a href="#oznaki">Oznaki zdrady</a>
+        <a href="#jak">Jak sprawdzić zdradę</a>
+        <a href="#test">Test zdrady</a>
+        <a href="#konsultacja">Konsultacja</a>
+        <a href="#sprzet">Sprzęt</a>
+        <a href="#blog">Blog</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+      <a class="btn btn-primary" href="#kontakt">Umów konsultację</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Kompendium wiedzy o zdradach + konsultacje</div>
+          <h1>Podejrzewasz zdradę?</h1>
+          <p class="lead">
+            Ta strona powstała dla osób, które żyją w niepewności i chcą spokojnie przeanalizować sytuację. Znajdziesz tu oznaki zdrady, praktyczne poradniki, test sytuacyjny, możliwość konsultacji oraz rozwiązania dopasowane do budżetu i skali problemu.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#test">Sprawdź test zdrady</a>
+            <a class="btn btn-secondary" href="#jak">Jak sprawdzić zdradę</a>
+          </div>
+          <p class="small">Twoje podejrzenia zasługują na odpowiedź. Niepewność bywa gorsza niż prawda.</p>
+        </div>
+        <aside class="hero-box">
+          <h3>Co znajdziesz na stronie?</h3>
+          <p>To nie jest zwykły blog. To uporządkowana ścieżka działania dla osób w trudnej sytuacji.</p>
+          <div class="mini-list">
+            <div class="mini-item"><span>•</span><span><strong>Rozbudowany blog SEO</strong> o zdradach, zachowaniach partnera, seksoholizmie, życiu po zdradzie i statystykach.</span></div>
+            <div class="mini-item"><span>•</span><span><strong>Konsultacje online i osobiste</strong> pomagające ocenić sytuację i wybrać bezpieczne działania.</span></div>
+            <div class="mini-item"><span>•</span><span><strong>Sprzęt do weryfikacji sytuacji</strong> z praktycznymi opisami zastosowań.</span></div>
+            <div class="mini-item"><span>•</span><span><strong>Wsparcie przy poważniejszych sprawach</strong> we współpracy z licencjonowanymi detektywami.</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="oznaki">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="accent-line"></div>
+            <h2>Pierwsze oznaki zdrady</h2>
+          </div>
+          <p>To sekcja, od której większość ludzi zaczyna. Nie daje wyroku, tylko porządkuje sygnały ostrzegawcze, które najczęściej pojawiają się w relacjach z problemem zaufania.</p>
+        </div>
+        <div class="grid-4">
+          <article class="card">
+            <h3>Ukrywanie telefonu</h3>
+            <p>Zmiana haseł, odwracanie ekranu, nerwowe reakcje na pytania i nagłe przywiązanie do prywatności urządzeń.</p>
+          </article>
+          <article class="card">
+            <h3>Nagła zmiana planu dnia</h3>
+            <p>Nowe nadgodziny, częstsze wyjścia, niejasne tłumaczenia i coraz więcej czasu poza domem bez konkretów.</p>
+          </article>
+          <article class="card">
+            <h3>Emocjonalny dystans</h3>
+            <p>Unikanie bliskości, chłód, brak zaangażowania w rozmowy i widoczne oddalanie się od codziennej relacji.</p>
+          </article>
+          <article class="card">
+            <h3>Nadmierna dbałość o wizerunek</h3>
+            <p>Nagła zmiana stylu, perfum, bielizny czy nawyków bez wyraźnego powodu. Czasem to nic, czasem niepokojący sygnał.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="jak">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="accent-line"></div>
+            <h2>Jak sprawdzić zdradę krok po kroku</h2>
+          </div>
+          <p>Nie działaj pod wpływem emocji. Najpierw analiza, potem decyzja. Strona ma prowadzić użytkownika od chaosu do planu działania.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <h3>Zbierz obserwacje</h3>
+            <p>Zapisz fakty: zmiany zachowania, nieobecności, dziwne tłumaczenia, tajemnice wokół telefonu i komunikacji.</p>
+          </div>
+          <div class="step">
+            <h3>Zrób test sytuacyjny</h3>
+            <p>Sprawdź, czy Twoje podejrzenia opierają się na pojedynczym incydencie, czy na powtarzającym się wzorcu zachowań.</p>
+          </div>
+          <div class="step">
+            <h3>Skorzystaj z konsultacji</h3>
+            <p>Wspólnie analizujemy sytuację, budżet i to, czy potrzebne są tylko wskazówki, sprzęt czy poważniejsze działania.</p>
+          </div>
+          <div class="step">
+            <h3>Wybierz bezpieczne rozwiązanie</h3>
+            <p>Od poradnika, przez sprzęt i analizę informacji, po współpracę z licencjonowanym detektywem w trudniejszych sprawach.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="test">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="accent-line"></div>
+            <h2>Test zdrady partnera</h2>
+          </div>
+          <p>Użytkownicy lubią szybkie narzędzia, bo ludzie chcą odpowiedzi natychmiast. Ten test nie stawia diagnozy, ale pomaga ocenić, czy Twoje wątpliwości mają podstawy.</p>
+        </div>
+        <div class="test-wrap">
+          <div class="card">
+            <div class="question" data-weight="2">
+              <p>1. Czy partner ukrywa telefon lub nagle zmienił hasła?</p>
+              <div class="choices">
+                <span class="choice" data-value="0">Nie</span>
+                <span class="choice" data-value="1">Czasem</span>
+                <span class="choice" data-value="2">Tak</span>
+              </div>
+            </div>
+            <div class="question" data-weight="2">
+              <p>2. Czy pojawiły się częste nadgodziny lub niejasne wyjścia?</p>
+              <div class="choices">
+                <span class="choice" data-value="0">Nie</span>
+                <span class="choice" data-value="1">Czasem</span>
+                <span class="choice" data-value="2">Tak</span>
+              </div>
+            </div>
+            <div class="question" data-weight="2">
+              <p>3. Czy partner stał się wyraźnie chłodniejszy emocjonalnie?</p>
+              <div class="choices">
+                <span class="choice" data-value="0">Nie</span>
+                <span class="choice" data-value="1">Trochę</span>
+                <span class="choice" data-value="2">Tak</span>
+              </div>
+            </div>
+            <div class="question" data-weight="1">
+              <p>4. Czy częściej usuwa wiadomości, historię połączeń lub chowa ekran?</p>
+              <div class="choices">
+                <span class="choice" data-value="0">Nie</span>
+                <span class="choice" data-value="1">Czasem</span>
+                <span class="choice" data-value="2">Tak</span>
+              </div>
+            </div>
+            <div class="question" data-weight="1">
+              <p>5. Czy nagle bardziej dba o wygląd bez jasnej przyczyny?</p>
+              <div class="choices">
+                <span class="choice" data-value="0">Nie</span>
+                <span class="choice" data-value="1">Trochę</span>
+                <span class="choice" data-value="2">Tak</span>
+              </div>
+            </div>
+            <div class="question" data-weight="2">
+              <p>6. Czy reaguje nerwowo, gdy pytasz o dzień, wiadomości lub znajomości?</p>
+              <div class="choices">
+                <span class="choice" data-value="0">Nie</span>
+                <span class="choice" data-value="1">Czasem</span>
+                <span class="choice" data-value="2">Tak</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="card result-box">
+            <div class="pill">Szybka ocena sytuacji</div>
+            <div class="result-value" id="scoreValue">0%</div>
+            <h3 id="scoreTitle">Uzupełnij test</h3>
+            <p id="scoreText" class="muted">Odpowiedz na pytania, żeby zobaczyć, czy Twoje podejrzenia mogą być uzasadnione. Internet nie rozwiąże relacji za Ciebie, ale może pomóc uporządkować sygnały.</p>
+            <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a href="#kontakt" class="btn btn-primary">Umów konsultację</a>
+              <a href="#blog" class="btn btn-secondary">Przeczytaj artykuły</a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="konsultacja">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="accent-line"></div>
+            <h2>Konsultacja przy podejrzeniu zdrady</h2>
+          </div>
+          <p>To główna usługa strony. Dla wielu osób to pierwszy, najtańszy i najrozsądniejszy krok przed podejmowaniem dalszych działań.</p>
+        </div>
+        <div class="grid-3">
+          <article class="card">
+            <h3>Konsultacja online</h3>
+            <p>Dla osób, które chcą szybko omówić sytuację, bez wychodzenia z domu i bez niepotrzebnego stresu.</p>
+          </article>
+          <article class="card">
+            <h3>Spotkanie osobiste</h3>
+            <p>Dla klientów, którzy wolą porozmawiać spokojnie na żywo i przejść przez sytuację krok po kroku.</p>
+          </article>
+          <article class="card">
+            <h3>Plan działania</h3>
+            <p>Po analizie sytuacji dobieramy rozwiązanie: edukacja, test, analiza informacji, sprzęt lub współpraca z licencjonowanym detektywem.</p>
+          </article>
+        </div>
+        <div style="margin-top:22px" class="cta-band">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:1.5rem;">Masz podejrzenie zdrady?</h3>
+            <p class="muted" style="margin:0; max-width:58ch;">Podczas konsultacji analizujemy sytuację, wskazujemy czerwone flagi i pomagamy ocenić, które działania mają sens przy Twoim budżecie i skali problemu.</p>
+          </div>
+          <a href="#kontakt" class="btn btn-primary">Skontaktuj się</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="sprzet">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="accent-line"></div>
+            <h2>Sprzęt do weryfikacji sytuacji</h2>
+          </div>
+          <p>Mały sklep z narzędziami dla osób, które chcą działać samodzielnie lub potrzebują rozwiązania dopasowanego do konkretnej sytuacji i ograniczonego budżetu.</p>
+        </div>
+        <div class="products-grid">
+          <article class="card">
+            <div class="product-top">
+              <h3>Mini dyktafon z aktywacją głosu</h3>
+              <span class="price">149 zł</span>
+            </div>
+            <p>Mały, dyskretny dyktafon uruchamiający nagrywanie po wykryciu dźwięku.</p>
+            <ul>
+              <li>aktywacja głosem</li>
+              <li>długi czas pracy</li>
+              <li>prosta obsługa</li>
+            </ul>
+            <p><strong>Praktyczne zastosowanie:</strong> pomoc w rejestrowaniu ważnych rozmów lub sytuacji wymagających późniejszego odsłuchania.</p>
+          </article>
+          <article class="card">
+            <div class="product-top">
+              <h3>Lokalizator GPS do samochodu</h3>
+              <span class="price">219 zł</span>
+            </div>
+            <p>Urządzenie pokazujące lokalizację pojazdu i historię tras w aplikacji.</p>
+            <ul>
+              <li>podgląd trasy</li>
+              <li>lokalizacja w czasie rzeczywistym</li>
+              <li>łatwy montaż</li>
+            </ul>
+            <p><strong>Praktyczne zastosowanie:</strong> weryfikacja przejazdów pojazdu, kontrola tras lub zabezpieczenie auta.</p>
+          </article>
+          <article class="card">
+            <div class="product-top">
+              <h3>Mini kamera WiFi HD</h3>
+              <span class="price">289 zł</span>
+            </div>
+            <p>Niewielka kamera z detekcją ruchu i zapisem obrazu na kartę pamięci.</p>
+            <ul>
+              <li>nagrywanie HD</li>
+              <li>detekcja ruchu</li>
+              <li>podgląd mobilny</li>
+            </ul>
+            <p><strong>Praktyczne zastosowanie:</strong> monitorowanie pomieszczeń, biura lub domu i rejestracja aktywności w określonym czasie.</p>
+          </article>
+          <article class="card">
+            <div class="product-top">
+              <h3>Kamera ukryta w ładowarce USB</h3>
+              <span class="price">249 zł</span>
+            </div>
+            <p>Urządzenie wyglądające jak zwykła ładowarka, z wbudowaną kamerą HD.</p>
+            <ul>
+              <li>dyskretna forma</li>
+              <li>zasilanie z gniazdka</li>
+              <li>długi czas pracy</li>
+            </ul>
+            <p><strong>Praktyczne zastosowanie:</strong> subtelny monitoring pomieszczenia bez codziennego ładowania urządzenia.</p>
+          </article>
+          <article class="card">
+            <div class="product-top">
+              <h3>Wykrywacz podsłuchów i kamer</h3>
+              <span class="price">329 zł</span>
+            </div>
+            <p>Detektor urządzeń emitujących sygnały radiowe, kamer bezprzewodowych i lokalizatorów.</p>
+            <ul>
+              <li>wykrywanie RF</li>
+              <li>alarm świetlny i dźwiękowy</li>
+              <li>kompaktowy rozmiar</li>
+            </ul>
+            <p><strong>Praktyczne zastosowanie:</strong> sprawdzenie domu, biura lub pojazdu pod kątem obecności urządzeń monitorujących.</p>
+          </article>
+          <article class="card">
+            <div class="product-top">
+              <h3>Dobór sprzętu do sytuacji</h3>
+              <span class="price">od 99 zł</span>
+            </div>
+            <p>Nie każdy potrzebuje tego samego. Czasem lepsza jest rozmowa i wybór sensownego rozwiązania niż zakup przypadkowego urządzenia.</p>
+            <ul>
+              <li>analiza potrzeb</li>
+              <li>rekomendacja sprzętu</li>
+              <li>oszczędność budżetu</li>
+            </ul>
+            <p><strong>Praktyczne zastosowanie:</strong> pomoc osobom, które nie wiedzą, czy w ich sytuacji lepszy będzie dyktafon, GPS, kamera czy po prostu konsultacja.</p>
+          </article>
+        </div>
+        <p class="legal">Produkty i informacje na stronie powinny być używane wyłącznie zgodnie z obowiązującym prawem. Przy poważniejszych sprawach lub działaniach wymagających licencji współpracujemy z licencjonowanymi detektywami.</p>
+      </div>
+    </section>
+
+    <section id="blog">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="accent-line"></div>
+            <h2>Blog i artykuły SEO</h2>
+          </div>
+          <p>Blog ma przyciągać ruch z Google i prowadzić użytkownika dalej. Dlatego kategorie i tytuły są ustawione pod realne pytania ludzi, a nie pod twórcze zachcianki internetu.</p>
+        </div>
+        <div class="blog-grid">
+          <article class="card article">
+            <span class="tag">Oznaki zdrady</span>
+            <h3>Pierwsze oznaki zdrady partnera. 15 sygnałów ostrzegawczych</h3>
+            <p>Najmocniejszy temat SEO na start. Artykuł o czerwonych flagach, które najczęściej budzą niepokój w relacji.</p>
+          </article>
+          <article class="card article">
+            <span class="tag">Jak sprawdzić zdradę</span>
+            <h3>Jak sprawdzić czy partner mnie zdradza bez działania pod wpływem emocji</h3>
+            <p>Poradnik krok po kroku: obserwacja, analiza, test, konsultacja i wybór dalszego rozwiązania.</p>
+          </article>
+          <article class="card article">
+            <span class="tag">Testerzy wierności</span>
+            <h3>Tester wierności. Na czym polega usługa i kiedy ludzie ją rozważają</h3>
+            <p>Kategoria budująca ciekawość i ruch. Artykuł opisujący temat spokojnie i profesjonalnie.</p>
+          </article>
+          <article class="card article">
+            <span class="tag">Niepokojące zachowania</span>
+            <h3>Dlaczego partner ukrywa telefon i czy zawsze oznacza to zdradę</h3>
+            <p>Artykuł pod jedną z najbardziej klikalnych fraz związanych z podejrzeniem niewierności.</p>
+          </article>
+          <article class="card article">
+            <span class="tag">Seksoholizm w związku</span>
+            <h3>Seksoholizm partnera. Objawy, sygnały i wpływ na relację</h3>
+            <p>Temat, który łączy duże emocje, wyszukiwania i potrzebę konsultacji, bo życie lubi komplikacje.</p>
+          </article>
+          <article class="card article">
+            <span class="tag">Po zdradzie</span>
+            <h3>Jak radzić sobie po zdradzie i kiedy warto odbudowywać związek</h3>
+            <p>Treść dla osób po odkryciu prawdy, które szukają wsparcia, odpowiedzi i spokojnego planu.</p>
+          </article>
+          <article class="card article">
+            <span class="tag">Statystyki zdrad</span>
+            <h3>Liczby nie kłamią. Statystyki zdrad Polek i Polaków</h3>
+            <p>Treść evergreen, która może łapać ruch przez lata i wzmacniać wiarygodność całego serwisu.</p>
+          </article>
+          <article class="card article">
+            <span class="tag">Testerzy wierności</span>
+            <h3>Czy test wierności naprawdę działa i jakie niesie skutki emocjonalne</h3>
+            <p>Artykuł opisujący wątpliwości, motywacje i konsekwencje, zamiast udawać telewizję śniadaniową.</p>
+          </article>
+          <article class="card article">
+            <span class="tag">Pomoc i doradztwo</span>
+            <h3>Podejrzenie zdrady. Co zrobić najpierw, a czego lepiej nie robić</h3>
+            <p>Tekst prowadzący prosto do konsultacji, bo czasem najważniejsze jest nie popełnić głupiego ruchu.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="cta-band">
+          <div>
+            <h2 style="margin:0 0 8px; font-size:2rem;">W sprawach wymagających licencji działamy z partnerami.</h2>
+            <p class="muted" style="margin:0; max-width:64ch;">Przy poważniejszych sytuacjach, takich jak czynności wymagające licencjonowanych działań detektywistycznych, możliwe jest skierowanie sprawy do współpracujących licencjonowanych detektywów.</p>
+          </div>
+          <a class="btn btn-primary" href="#kontakt">Zapytaj o możliwości</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="kontakt">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="accent-line"></div>
+            <h2>Anonimowy pierwszy kontakt</h2>
+          </div>
+          <p>Największą barierą zwykle nie jest cena, tylko wstyd i niepewność. Dlatego formularz jest prosty i ma zachęcać do pierwszego kroku.</p>
+        </div>
+        <div class="test-wrap">
+          <div class="card">
+            <form>
+              <div class="form-grid">
+                <div>
+                  <label for="name" class="small">Imię lub pseudonim</label>
+                  <input id="name" type="text" placeholder="Jak mamy się do Ciebie zwracać" />
+                </div>
+                <div>
+                  <label for="contactType" class="small">Preferowana forma kontaktu</label>
+                  <select id="contactType">
+                    <option>Telefon</option>
+                    <option>E-mail</option>
+                    <option>Rozmowa online</option>
+                    <option>Spotkanie osobiste</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-grid">
+                <div>
+                  <label for="email" class="small">E-mail</label>
+                  <input id="email" type="email" placeholder="Twój adres e-mail" />
+                </div>
+                <div>
+                  <label for="phone" class="small">Telefon</label>
+                  <input id="phone" type="tel" placeholder="Numer telefonu" />
+                </div>
+              </div>
+              <div>
+                <label for="topic" class="small">Temat</label>
+                <select id="topic">
+                  <option>Konsultacja przy podejrzeniu zdrady</option>
+                  <option>Dobór sprzętu</option>
+                  <option>Test wierności / weryfikacja lojalności</option>
+                  <option>Współpraca z licencjonowanym detektywem</option>
+                </select>
+              </div>
+              <div>
+                <label for="message" class="small">Opisz swoją sytuację</label>
+                <textarea id="message" placeholder="Napisz krótko, co Cię niepokoi i czego potrzebujesz."></textarea>
+              </div>
+              <button type="button" class="btn btn-primary">Wyślij zgłoszenie</button>
+            </form>
+          </div>
+          <aside class="card">
+            <h3>Co oferuje strona w skrócie?</h3>
+            <ul>
+              <li>kompendium wiedzy o zdradach i zachowaniach partnera</li>
+              <li>rozbudowany blog pod SEO</li>
+              <li>test zdrady i szybka ocena sytuacji</li>
+              <li>konsultacje online i osobiste</li>
+              <li>sprzęt do weryfikacji sytuacji z praktycznymi opisami</li>
+              <li>możliwość współpracy z licencjonowanymi detektywami</li>
+            </ul>
+            <p class="muted">Strona ma grać na emocjach, ale jednocześnie dawać użytkownikowi poczucie bezpieczeństwa, dyskrecji i konkretnego planu działania. Czyli coś rzadkiego w internecie.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; align-items:center;">
+        <div>
+          <strong>Wykryj Zdradę</strong><br />
+          <span class="small">Kompendium wiedzy, konsultacje i rozwiązania dopasowane do sytuacji.</span>
+        </div>
+        <div class="small">© 2026 Wszystkie prawa zastrzeżone</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const questions = document.querySelectorAll('.question');
+    const scoreValue = document.getElementById('scoreValue');
+    const scoreTitle = document.getElementById('scoreTitle');
+    const scoreText = document.getElementById('scoreText');
+
+    function updateScore() {
+      let score = 0;
+      let maxScore = 0;
+      let answered = 0;
+
+      questions.forEach((q) => {
+        const weight = Number(q.dataset.weight || 1);
+        maxScore += 2 * weight;
+        const active = q.querySelector('.choice.active');
+        if (active) {
+          score += Number(active.dataset.value) * weight;
+          answered += 1;
+        }
+      });
+
+      const percent = maxScore ? Math.round((score / maxScore) * 100) : 0;
+      scoreValue.textContent = percent + '%';
+
+      if (answered === 0) {
+        scoreTitle.textContent = 'Uzupełnij test';
+        scoreText.textContent = 'Odpowiedz na pytania, żeby zobaczyć, czy Twoje podejrzenia mogą być uzasadnione. Internet nie rozwiąże relacji za Ciebie, ale może pomóc uporządkować sygnały.';
+        return;
+      }
+
+      if (percent < 30) {
+        scoreTitle.textContent = 'Niskie ryzyko';
+        scoreText.textContent = 'Na tym etapie test nie pokazuje silnego nagromadzenia sygnałów ostrzegawczych. Warto obserwować sytuację spokojnie i nie działać pochopnie.';
+      } else if (percent < 60) {
+        scoreTitle.textContent = 'Możliwe oznaki problemu';
+        scoreText.textContent = 'Kilka odpowiedzi wskazuje na powtarzające się sygnały, które mogą budzić wątpliwości. Dobrym kolejnym krokiem może być konsultacja i uporządkowanie faktów.';
+      } else {
+        scoreTitle.textContent = 'Wysoki poziom niepokoju';
+        scoreText.textContent = 'Zaznaczone odpowiedzi sugerują nagromadzenie sygnałów ostrzegawczych. To nie jest dowód zdrady, ale może uzasadniać dalszą analizę sytuacji i wybór konkretnego planu działania.';
+      }
+    }
+
+    document.querySelectorAll('.choice').forEach((choice) => {
+      choice.addEventListener('click', () => {
+        const group = choice.parentElement.querySelectorAll('.choice');
+        group.forEach((c) => c.classList.remove('active'));
+        choice.classList.add('active');
+        updateScore();
+      });
+    });
+  </script>
+</body>
+</html>
